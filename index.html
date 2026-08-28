@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QS | كيو - تطبيق المصغر</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            padding-bottom: 90px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .update-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-text {
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .user-welcome {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #3b82f6;
+            object-fit: cover;
+        }
+
+        .page-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(20, 24, 33, 0.9), rgba(13, 17, 23, 0.9));
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .mini-card {
+            background: rgba(18, 22, 31, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .mini-card .title {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .mini-card .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .gold-btn {
+            background: linear-gradient(135deg, #d4af37, #aa7c11);
+            color: #000;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: 0.2s;
+        }
+
+        .gold-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* نافذة الإعلان المنبثقة */
+        #ad-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .ad-box {
+            background: #151922;
+            border: 2px solid #d4af37;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        /* نافذة لعبة الهوكي */
+        #game-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #0b0f19;
+            z-index: 3000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 10px;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 360px;
+            align-items: center;
+            background: rgba(255,255,255,0.05);
+            padding: 10px 15px;
+            border-radius: 12px;
+        }
+
+        #game-canvas {
+            background: radial-gradient(circle, #151928 0%, #080b12 100%);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            touch-action: none;
+        }
+
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #080b11;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 5px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: #64748b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.3s;
+            flex: 1;
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .nav-item.active {
+            color: #d4af37;
+        }
+
+        .nav-center-btn {
+            background: linear-gradient(135deg, #22252a, #111419);
+            border: 2px solid #d4af37;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            margin-top: -15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- نافذة الإعلان المنبثقة -->
+    <div id="ad-modal">
+        <div class="ad-box">
+            <h3 style="color: #d4af37; margin-bottom: 10px;">📺 جاري عرض الإعلان</h3>
+            <p id="ad-timer-text" style="font-size: 14px; margin-bottom: 20px; color: #94a3b8;">يرجى الانتظار <span id="countdown">5</span> ثوان...</p>
+            <div style="background: #0b0f19; height: 8px; border-radius: 4px; overflow: hidden;">
+                <div id="ad-progress" style="background: #d4af37; height: 100%; width: 100%; transition: width 1s linear;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة لعبة الهوكي -->
+    <div id="game-modal">
+        <div class="game-header">
+            <button onclick="closeGame()" style="background: #ef4444; border: none; color: white; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;">عودة</button>
+            <div style="display: flex; gap: 15px; font-weight: bold; font-size: 16px;">
+                <span style="color: #ef4444;">🤖 <span id="ai-score">0</span></span>
+                <span>VS</span>
+                <span style="color: #3b82f6;">👤 <span id="player-score">0</span></span>
+            </div>
+        </div>
+        <canvas id="game-canvas" width="340" height="480"></canvas>
+        <div style="color: #94a3b8; font-size: 12px; text-align: center;">حرك إصبعك في الأسفل لتحريك المضرب الأزرق</div>
+    </div>
+
+    <!-- الهيدر العلوي -->
+    <header class="header">
+        <button class="update-btn">
+            <span>تحديث</span> ⏳
+        </button>
+        <div class="user-info">
+            <div class="user-text">
+                <div class="user-name">QS | كيو</div>
+                <div class="user-welcome">مرحباً بعودتك</div>
+            </div>
+            <img src="https://via.placeholder.com/150" alt="Avatar" class="user-avatar">
+        </div>
+    </header>
+
+    <!-- صفحة الرئيسية -->
+    <div id="home" class="page-content active">
+        <div class="card-grid">
+            <div class="mini-card">
+                <div class="title">عملة الصقر</div>
+                <div class="value"><span id="falcon-coins">15</span> 🦅</div>
+            </div>
+            <div class="mini-card">
+                <div class="title">عملة التنين</div>
+                <div class="value">0 🐉</div>
+            </div>
+        </div>
+        <div class="card-grid">
+            <div class="mini-card">
+                <div class="title">USDT</div>
+                <div class="value">$0.0000 💎</div>
+            </div>
+            <div class="mini-card">
+                <div class="title">جوهرة · مباشر</div>
+                <div class="value">0 💠</div>
+            </div>
+        </div>
+        
+        <div class="card" style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="gold-btn">💳 بطاقات</button>
+            <button class="gold-btn">📤 اثبات السحب</button>
+            <button class="gold-btn">📥 سحب</button>
+        </div>
+    </div>
+
+    <!-- صفحة المهام -->
+    <div id="tasks" class="page-content">
+        <div class="card">
+            <h3 style="margin-bottom: 10px; font-size: 15px;">📝 المهام اليومية</h3>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">شاهد الإعلانات واكسب العملات مجاناً</p>
+            <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span>مشاهدة إعلان (+2 صقر)</span>
+                <button class="gold-btn" style="width: auto; padding: 6px 15px;" onclick="startAd()">شاهد واريح 🦅</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة اكسب -->
+    <div id="earn" class="page-content">
+        <div class="card">
+            <h3 style="margin-bottom: 10px; font-size: 15px;">🤖 العب ضد الذكاء الاصطناعي AI</h3>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">طور مستواك قبل مواجهة اللاعبين</p>
+            <button class="gold-btn" onclick="openGame()">🤖 ابدأ اللعب ضد الذكاء الاصطناعي</button>
+        </div>
+        <div class="card">
+            <h3 style="margin-bottom: 10px; font-size: 15px;">🌍 اللعب مع لاعب حقيقي</h3>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">العب ضد لاعبين من جميع أنحاء العالم</p>
+            <div style="text-align: center; color: #d4af37; padding: 10px; background: rgba(212,175,55,0.05); border-radius: 10px;">
+                ✨ يرجى الانتظار قليلاً...
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة المتجر -->
+    <div id="store" class="page-content">
+        <div class="card">
+            <h3 style="margin-bottom: 10px; font-size: 15px;">⭐ شراء النقاط بنجوم تليجرام</h3>
+            <p style="color: #94a3b8; font-size: 13px; margin-bottom: 15px;">استخدم نجوم تليجرام لشحن رصيدك فوراً</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>50 عملة صقر 🦅</span>
+                    <button class="gold-btn" style="width: auto; padding: 6px 15px;" onclick="buyWithStars(50, 10)">10 ⭐ نجوم</button>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>150 عملة صقر 🦅</span>
+                    <button class="gold-btn" style="width: auto; padding: 6px 15px;" onclick="buyWithStars(150, 25)">25 ⭐ نجوم</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="gold-btn" style="margin-bottom: 15px;">📷 طلب فوري - انستغرام</button>
+    </div>
+
+    <!-- صفحة مكافآت -->
+    <div id="rewards" class="page-content">
+        <div class="card">
+            <h3 style="margin-bottom: 10px; font-size: 15px;">🔗 رابط الدعوة الخاص بك</h3>
+            <div style="background: #05070a; padding: 10px; border-radius: 8px; font-size: 12px; color: #d4af37; margin-bottom: 10px; word-break: break-all;">
+                https://t.me/Dragon_iqBot?start=ref_8942823469
+            </div>
+            <button class="gold-btn">📋 نسخ الرابط</button>
+        </div>
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <nav class="nav-bar">
+        <button class="nav-item" onclick="switchPage('rewards', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+            <span>مكافآت</span>
+        </button>
+        <button class="nav-item" onclick="switchPage('store', this)">
+            <svg viewBox="0 0 24 24"><path d="M7 18C5.9 18 5.01 18.9 5.01 20C5.01 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L21.88 3.48C21.96 3.34 22 3.17 22 3C22 2.45 21.55 2 21 2H5.21L4.27 2H1ZM17 18C15.9 18 15.01 18.9 15.01 20C15.01 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18Z"/></svg>
+            <span>المتجر</span>
+        </button>
+        <button class="nav-item active" onclick="switchPage('earn', this)">
+            <div class="nav-center-btn">
+                <svg style="width:24px;height:24px;" viewBox="0 0 24 24"><path fill="currentColor" d="M21,6H3A2,2 0 0,0 1,8V16A2,2 0 0,0 3,18H21A2,2 0 0,0 23,16V8A2,2 0 0,0 21,6M21,16H3V8H21V16M6,10H8V12H10V14H8V16H6V14H4V12H6V10M14.5,13.5C14.5,14.33 13.83,15 13,15C12.17,15 11.5,14.33 11.5,13.5C11.5,12.67 12.17,12 13,12C13.83,12 14.5,12.67 14.5,13.5M18.5,10.5C18.5,11.33 17.83,12 17,12C16.17,12 15.5,11.33 15.5,10.5C15.5,9.67 16.17,9 17,9C17.83,9 18.5,9.67 18.5,10.5Z"/></svg>
+            </div>
+            <span>اكسب</span>
+        </button>
+        <button class="nav-item" onclick="switchPage('tasks', this)">
+            <svg viewBox="0 0 24 24"><path d="M19 3H14.82C14.4 1.84 13.3 1 12 1S9.6 1.84 9.18 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM12 3C12.55 3 13 3.45 13 4C13 4.55 12.55 5 12 5C11.45 5 11 4.55 11 4C11 3.45 11.45 3 12 3ZM7 7H17V9H7V7ZM17 17H7V15H17V17ZM17 13H7V11H17V13Z"/></svg>
+            <span>المهام</span>
+        </button>
+        <button class="nav-item" onclick="switchPage('home', this)">
+            <svg viewBox="0 0 24 24"><path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20H10Z"/></svg>
+            <span>الرئيسية</span>
+        </button>
+    </nav>
+
+    <script>
+        function switchPage(pageId, element) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        // رصيد العملات
+        let falconCoins = 15;
+
+        // نظام الشراء بنجوم تليجرام
+        function buyWithStars(coinsAmount, starsCost) {
+            if(confirm(`هل تريد شراء ${coinsAmount} عملة صقر مقابل ${starsCost} من نجوم تليجرام ⭐؟`)) {
+                // هنا لاحقاً تربطها بدفع تليجرام الفعلي (Telegram Stars API)
+                falconCoins += coinsAmount;
+                document.getElementById('falcon-coins').textContent = falconCoins;
+                alert(`✨ تمت العملية بنجاح! تم إضافة ${coinsAmount} صقر إلى رصيدك.`);
+            }
+        }
+
+        // نظام الإعلانات
+        function startAd() {
+            const modal = document.getElementById('ad-modal');
+            const countdownEl = document.getElementById('countdown');
+            const progressBar = document.getElementById('ad-progress');
+            
+            modal.style.display = 'flex';
+            let timeLeft = 5;
+            countdownEl.textContent = timeLeft;
+            progressBar.style.width = '100%';
+            progressBar.style.transition = 'none';
+
+            setTimeout(() => {
+                progressBar.style.transition = 'width 5s linear';
+                progressBar.style.width = '0%';
+            }, 50);
+
+            let timer = setInterval(() => {
+                timeLeft--;
+                countdownEl.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    modal.style.display = 'none';
+                    falconCoins += 2;
+                    document.getElementById('falcon-coins').textContent = falconCoins;
+                    alert('🎉 مبروك! لقد حصلت على 2 عملة صقر بنجاح.');
+                }
+            }, 1000);
+        }
+
+        // لعبة الهوكي
+        let gameInterval;
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        let pScore = 0, aiScore = 0;
+        let ball = { x: 170, y: 240, radius: 10, speedX: 3, speedY: 4 };
+        let player = { x: 170, y: 440, radius: 25 };
+        let ai = { x: 170, y: 40, radius: 25 };
+
+        function openGame() {
+            document.getElementById('game-modal').style.display = 'flex';
+            resetBall();
+            pScore = 0; aiScore = 0;
+            updateScores();
+            if(!gameInterval) {
+                gameInterval = setInterval(updateGame, 1000 / 60);
+            }
+        }
+
+        function closeGame() {
+            document.getElementById('game-modal').style.display = 'none';
+            clearInterval(gameInterval);
+            gameInterval = null;
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.speedX = (Math.random() > 0.5 ? 3 : -3);
+            ball.speedY = (Math.random() > 0.5 ? 4 : -4);
+        }
+
+        function updateScores() {
+            document.getElementById('player-score').textContent = pScore;
+            document.getElementById('ai-score').textContent = aiScore;
+        }
+
+        canvas.addEventListener('touchmove', (e) => {
+            let rect = canvas.getBoundingClientRect();
+            let touch = e.touches[0];
+            player.x = touch.clientX - rect.left;
+            if(player.x < player.radius) player.x = player.radius;
+            if(player.x > canvas.width - player.radius) player.x = canvas.width - player.radius;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            let rect = canvas.getBoundingClientRect();
+            player.x = e.clientX - rect.left;
+            if(player.x < player.radius) player.x = player.radius;
+            if(player.x > canvas.width - player.radius) player.x = canvas.width - player.radius;
+        });
+
+        function updateGame() {
+            ball.x += ball.speedX;
+            ball.y += ball.speedY;
+
+            if(ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+                ball.speedX = -ball.speedX;
+            }
+
+            let aiSpeed = 2.5;
+            if(ai.x < ball.x - 10) ai.x += aiSpeed;
+            if(ai.x > ball.x + 10) ai.x -= aiSpeed;
+            if(ai.x < ai.radius) ai.x = ai.radius;
+            if(ai.x > canvas.width - ai.radius) ai.x = canvas.width - ai.radius;
+
+            let distX = ball.x - player.x;
+            let distY = ball.y - player.y;
+            if(Math.sqrt(distX * distX + distY * distY) < ball.radius + player.radius) {
+                ball.speedY = -Math.abs(ball.speedY);
+                ball.speedX += (player.x - canvas.width/2) * 0.05;
+            }
+
+            let aiDistX = ball.x - ai.x;
+            let aiDistY = ball.y - ai.y;
+            if(Math.
